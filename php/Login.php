@@ -13,7 +13,7 @@
         }
 
     // HANDLE THE LOGIN SUBMISSION
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Username'])) {
         $username = $conn->real_escape_string($_POST['Username']);
         $pass = $_POST['password'];
 
@@ -36,24 +36,30 @@
 <!DOCTYPE html>
 <html lang = "en">
     <head>
-        Study Buddies Login
+        <meta charset = "UTF-8">
+        <title>Study Buddies</title>
+        <link rel = "stylesheet" href = "CSS/Login.css">
     </head>
+    <!--<header>
+        Study Buddies Login
+    </header>-->
     <body>
-        <h1>Login</h1>
+        <div class = "login-container">
+            <h1>Study Buddies Login</h1>
+            <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($error)): ?>
+                <p style="color: red; font-weight: bold; background: #ffe6e6; padding: 10px; border: 1px solid red; border-radius: 5px; width: 250px;">
+                    <?php echo $error; ?>
+                </p>
+            <?php endif; ?>
             <form method = "POST" style = "margin: 20px 0;">
                 <input type = "text" name = "Username" placeholder = "Username" required><br>
-                <input type = "text" name = "password" placeholder = "Password" required><br>
-                    <form action = "index.php">
-                        <button type = "Login"> Login </button><br>
-                    </form>
-
+                <input type = "password" name = "password" placeholder = "Password" required><br>
+                <button type = "submit"> Login </button><br>
             </form>
 
-    <hr>
-
-        <p>Dont have an accoutn?</p>
-            <form action = "http://127.0.0.1:8080/registration.php">
-                    <button type = "New User"> New User</button>
-            </form>
-        </body>
+            <hr>
+            <p>New User?</p>
+            <a href = "registration.php"><button type = "New User"> Create Account </button></a>
+        </div>
+    </body>
 </html>

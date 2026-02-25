@@ -34,10 +34,12 @@
 <!DOCTYPE html>
 <html lang = "en">
     <head>
-        Study Buddies New User Registration
+        <!--Study Buddies New User Registration-->
+        <link rel = "stylesheet" href = "CSS/Login.css">
     </head>
     <body>
-        <h1>Login</h1>
+        <div class = "login-container">
+            <h1>Study Buddies Registration</h1>
             <form method = "POST" style = "margin: 20px 0;">
                 <input type = "text" name = "Name" placeholder = "Name" required><br>
                 <input type = "text" name = "Username" placeholder = "Username" required><br>
@@ -45,5 +47,6 @@
                 <button type = "submit"> Submit Registration</button>
             </form>
         <p>Already have an account>? <a href = "Login.php">Login here</a></p>
+        </div>
     </body>
 </html>

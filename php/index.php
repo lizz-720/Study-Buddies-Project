@@ -57,7 +57,7 @@
 <!DOCTYPE html>    
 <html lang = "en">
     <head>
-        <title>AI Study Guide Creator</title>
+        <title>Study Guide Creator</title>
         <style>
             body { font-family: sans-serif; max-width: 800px; margin: 2em auto; line-height: 1.6; }
             .result-box { background: #f4f4f4; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
@@ -66,11 +66,7 @@
     <body>
         <h1>Welcome, <?php echo htmlspecialchars($_SESSION['name']); ?>!</h1>
         <a href="logout.php"><button>Logout</button></a>
-        <h1>📚 Study Guide Generator</h1>
-        <form method="POST" style="margin: 20px 0;">
-            <input type="text" name="topic" placeholder="Enter topic..." required>
-            <button type="submit">Generate AI Guide</button>
-        </form>
+        <h1>Study Guide Generator</h1>
         
         <!--<a href="?add=true"><button>Add Sample Subject (Math)</button></a> -->
         <form method = "POST" style = "margin: 20px 0;">
