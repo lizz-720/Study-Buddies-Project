@@ -46,19 +46,25 @@
     <body>
         <div class = "login-container">
             <h1>Study Buddies Login</h1>
+
+            <!--Checks if there is username/password is correct if not then itll create a an error message-->
             <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($error)): ?>
                 <p style="color: red; font-weight: bold; background: #ffe6e6; padding: 10px; border: 1px solid red; border-radius: 5px; width: 250px;">
                     <?php echo $error; ?>
                 </p>
             <?php endif; ?>
+
+            <!--where user input fields are along with submit button-->
             <form method = "POST" style = "margin: 20px 0;">
                 <input type = "text" name = "Username" placeholder = "Username" required><br>
                 <input type = "password" name = "password" placeholder = "Password" required><br>
                 <button type = "submit"> Login </button><br>
             </form>
 
+            <!--create a break between the user inputs and allowing new users to creaete an account-->
             <hr>
             <p>New User?</p>
+            <!--sends user to registration.php-->
             <a href = "registration.php"><button type = "New User"> Create Account </button></a>
         </div>
     </body>
