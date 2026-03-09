@@ -1,0 +1,31 @@
+body {
+  font-family: monospace;
+  text-align:center;
+  background-color:#f4f8ff;
+}
+
+.eventInput {
+  margin:30px;
+}
+
+input {
+  padding:10px;
+  margin:5px;
+}
+
+button {
+  padding:10px 15px;
+  cursor:pointer;
+}
+
+#eventList {
+  list-style:none;
+  padding:0;
+}
+
+li {
+  margin:10px;
+  background:white;
+  padding:10px;
+  border-radius:8px;
+}
