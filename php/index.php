@@ -64,6 +64,13 @@
         </style>
     </head>
     <body>
+        <div style="margin-bottom: 20px;">
+            <a href="http://localhost:8081/mainscreen.html">
+                <button style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">
+                    🏠 Go to StudyBuddy Menu
+                </button>
+            </a>
+        </div>
         <h1>Welcome, <?php echo htmlspecialchars($_SESSION['name']); ?>!</h1>
         <a href="logout.php"><button>Logout</button></a>
         <h1>📚 Study Guide Generator</h1>
@@ -80,7 +87,7 @@
         <h3 style="margin-top: 30px;">Database Records</h3>
         <table>
             <tr>
-                <th>ID</th>
+                
                 <th>Subject</th>
                 <!--<th>Difficulty</th> -->
             </tr>
@@ -90,7 +97,6 @@
             if ($result && $result->num_rows > 0) {
                 while($row = $result->fetch_assoc()) {
                     echo "<tr>
-                            <td>" . $row["id"] . "</td>
                             <td>" . htmlspecialchars($row["subject_name"]) . "</td>
                            
                         </tr>";

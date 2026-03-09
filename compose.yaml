@@ -10,6 +10,13 @@ services:
       - db
       - logic-api
 
+  frontend:
+    build: ./html
+    ports:
+      - "8081:80"
+    volumes:
+      - ./html:/var/www/html
+
 
   # Python Logic (FastAPI)
   logic-api:
