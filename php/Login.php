@@ -1,59 +1,65 @@
 <?php
-    session_start();
-    $host = 'db';
-    $user = 'root';
-    $password = 'root_password';
-    $db = 'studyguide_db';
+session_start();
 
-    $conn = new mysqli($host, $user, $password, $db);
+$host = 'db';
+$user = 'root';
+$password = 'root_password';
+$db = 'studyguide_db';
 
-    if ($conn->connect_error) 
-        {
-            die("Connection failed: " . $conn->connect_error);
-        }
+$conn = new mysqli($host, $user, $password, $db);
 
-    // HANDLE THE LOGIN SUBMISSION
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $username = $conn->real_escape_string($_POST['Username']);
-        $pass = $_POST['password'];
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-        // Check if user exists in the 'users' table created by setup.sql
-        $result = $conn->query("SELECT * FROM users WHERE username = '$username' AND password = '$pass'");
+// handle the login submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        if ($result && $result->num_rows > 0) 
-            {
-                $user_data = $result->fetch_assoc();
-                $_SESSION['user_id'] = $user_data['id']; // Store their ID
-                $_SESSION['name'] = $user_data['name'];
-                header("Location: index.php"); // Send them to the generator
-                exit();
-        } else {
-                $error = "Invalid Username or Password!";
-        }
+    $username = $conn->real_escape_string($_POST['Username']);
+    $pass = $_POST['password'];
+
+    $result = $conn->query("SELECT * FROM users WHERE username = '$username' AND password = '$pass'");
+
+    if ($result && $result->num_rows > 0) {
+        $user_data = $result->fetch_assoc();
+        $_SESSION['user_id'] = $user_data['id'];
+        $_SESSION['name'] = $user_data['name'];
+
+        header("Location: index.php");
+        exit();
+    } else {
+        $error = "Invalid Username or Password!";
     }
+}
 ?>
 
 <!DOCTYPE html>
-<html lang = "en">
-    <head>
-        Study Buddies Login
-    </head>
-    <body>
-        <h1>Login</h1>
-            <form method = "POST" style = "margin: 20px 0;">
-                <input type = "text" name = "Username" placeholder = "Username" required><br>
-                <input type = "text" name = "password" placeholder = "Password" required><br>
-                    <form action = "index.php">
-                        <button type = "Login"> Login </button><br>
-                    </form>
+<html lang="en">
+<head>
+    <title>Study Buddies Login</title>
+</head>
+<body>
 
-            </form>
+<h1>Login</h1>
 
-    <hr>
+<?php
+if (isset($error)) {
+    echo "<p style='color:red;'>$error</p>";
+}
+?>
 
-        <p>Dont have an accoutn?</p>
-            <form action = "http://127.0.0.1:8080/registration.php">
-                    <button type = "New User"> New User</button>
-            </form>
-        </body>
+<form method="POST">
+    <input type="text" name="Username" placeholder="Username" required><br>
+    <input type="password" name="password" placeholder="Password" required><br>
+    <button type="submit">Login</button>
+</form>
+
+<hr>
+
+<p>Don't have an account?</p>
+<form action="registration.php">
+    <button type="submit">New User</button>
+</form>
+
+</body>
 </html>

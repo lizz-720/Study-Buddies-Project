@@ -65,14 +65,16 @@
     </head>
     <body>
         <h1>Welcome, <?php echo htmlspecialchars($_SESSION['name']); ?>!</h1>
-        <a href="logout.php"><button>Logout</button></a>
+<a href="logout.php"><button>Logout</button></a>
+<a href="flashcards.php"><button type="button">Flashcards</button></a>
+<a href="timer.php"><button type="button">Study Timer</button></a>
+<a href="fill_blank.php"><button type="button">Fill in the Blank</button></a>
         <h1>📚 Study Guide Generator</h1>
         <form method="POST" style="margin: 20px 0;">
             <input type="text" name="topic" placeholder="Enter topic..." required>
             <button type="submit">Generate AI Guide</button>
         </form>
         
-        <!--<a href="?add=true"><button>Add Sample Subject (Math)</button></a> -->
         <form method = "POST" style = "margin: 20px 0;">
             <input type = "text" name = "new_subject" placeholder = "Enter new subject name" required>
             <button type = "submit"> Add Subject</button>
@@ -82,19 +84,23 @@
             <tr>
                 <th>ID</th>
                 <th>Subject</th>
-                <!--<th>Difficulty</th> -->
+                <th>Flashcards</th>
             </tr>
             <?php
             $current_user = $_SESSION['user_id'];
             $result = $conn->query("SELECT id, subject_name FROM subjects WHERE user_id = '$current_user'");
             if ($result && $result->num_rows > 0) {
                 while($row = $result->fetch_assoc()) {
-                    echo "<tr>
-                            <td>" . $row["id"] . "</td>
-                            <td>" . htmlspecialchars($row["subject_name"]) . "</td>
-                           
-                        </tr>";
-                }
+
+    $id = (int)$row["id"];
+    $name = htmlspecialchars($row["subject_name"]);
+
+    echo "<tr>
+            <td>$id</td>
+            <td>$name</td>
+            <td><a href='flashcards.php?subject_id=$id'>Open Flashcards</a></td>
+          </tr>";
+}
             } else {
                 echo "<tr><td colspan='3'>No data found. Click the button above!</td></tr>";
             }
