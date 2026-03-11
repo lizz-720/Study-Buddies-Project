@@ -57,20 +57,32 @@
 <!DOCTYPE html>    
 <html lang = "en">
     <head>
-        <title>AI Study Guide Creator</title>
+        <meta charset = "UTF-8">
+        <title>Study Guide Creator</title>
+        <link rel = "stylesheet" href = "CSS/index.css">
         <style>
             body { font-family: sans-serif; max-width: 800px; margin: 2em auto; line-height: 1.6; }
             .result-box { background: #f4f4f4; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
         </style>
     </head>
     <body>
-        <h1>Welcome, <?php echo htmlspecialchars($_SESSION['name']); ?>!</h1>
-<a href="logout.php"><button>Logout</button></a>
-<a href="flashcards.php"><button type="button">Flashcards</button></a>
-<a href="timer.php"><button type="button">Study Timer</button></a>
-<a href="fill_blank.php"><button type="button">Fill in the Blank</button></a>
-        <h1>📚 Study Guide Generator</h1>
+        <div class = "logout-container">
+            <a href="logout.php"><button>Logout</button></a>
+        </div>
+
+        <div vlass = "header-section">
+            <h1>📚 Study Guide Generator</h1>
+
+            <h2>Welcome, <?php echo htmlspecialchars($_SESSION['name']); ?>!</h1>
+
+            <div class = "button-nav">
+                <a href="flashcards.php"><button type="button">Flashcards</button></a>
+                <a href="timer.php"><button type="button">Study Timer</button></a>
+                <a href="fill_blank.php"><button type="button">Fill in the Blank</button></a>
+            </div>
+        </div>
         
+
         <form method = "POST" style = "margin: 20px 0;">
             <input type = "text" name = "new_subject" placeholder = "Enter new subject name" required>
             <button type = "submit"> Add Subject</button>

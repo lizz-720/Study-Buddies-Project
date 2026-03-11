@@ -1,0 +1,29 @@
+body { 
+    font-family: sans-serif; 
+    max-width: 800px; 
+    margin: 2em auto; 
+    line-height: 1.6; 
+    position: relative; /* Necessary for absolute positioning of logout */
+}
+
+.logout-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.header-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.button-nav {
+    margin-top: 15px;
+}
+
+.result-box { 
+    background: #f4f4f4; 
+    padding: 15px; 
+    border-radius: 8px; 
+    border: 1px solid #ddd; 
+}
