@@ -36,30 +36,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset = "UTF-8">
     <title>Study Buddies Login</title>
+    <link rel = "stylesheet" href = "CSS/Login.css">
 </head>
 <body>
+<div class = "login-container">
+    <h1>Study Buddies Login</h1>
 
-<h1>Login</h1>
+        <?php
+        if (isset($error)) {
+            echo "<p style='color:red;'>$error</p>";
+        }
+        ?>
 
-<?php
-if (isset($error)) {
-    echo "<p style='color:red;'>$error</p>";
-}
-?>
+        <form method="POST">
+            <input type="text" name="Username" placeholder="Username" required><br>
+            <input type="password" name="password" placeholder="Password" required><br>
+            <button type="submit">Login</button>
+        </form>
 
-<form method="POST">
-    <input type="text" name="Username" placeholder="Username" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button type="submit">Login</button>
-</form>
+        <hr>
 
-<hr>
+        <p>Don't have an account?</p>
+        <form action="registration.php">
+            <button type="submit">New User</button>
+        </form>
 
-<p>Don't have an account?</p>
-<form action="registration.php">
-    <button type="submit">New User</button>
-</form>
-
+    </div>
 </body>
 </html>
