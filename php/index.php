@@ -70,10 +70,6 @@
 <a href="timer.php"><button type="button">Study Timer</button></a>
 <a href="fill_blank.php"><button type="button">Fill in the Blank</button></a>
         <h1>📚 Study Guide Generator</h1>
-        <form method="POST" style="margin: 20px 0;">
-            <input type="text" name="topic" placeholder="Enter topic..." required>
-            <button type="submit">Generate AI Guide</button>
-        </form>
         
         <form method = "POST" style = "margin: 20px 0;">
             <input type = "text" name = "new_subject" placeholder = "Enter new subject name" required>
