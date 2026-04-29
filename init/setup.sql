@@ -23,3 +23,8 @@ CREATE TABLE IF NOT EXISTS study_content (
     question TEXT NOT NULL,
     answer TEXT NOT NULL
 );
+
+ALTER TABLE calendar_events 
+ADD COLUMN title VARCHAR(255) NOT NULL AFTER user_id,
+ADD COLUMN event_date DATE NOT NULL AFTER title,
+ADD COLUMN category ENUM('project', 'quiz', 'other') DEFAULT 'other' AFTER event_date;

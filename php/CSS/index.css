@@ -1,29 +1,155 @@
-body { 
-    font-family: sans-serif; 
-    max-width: 800px; 
-    margin: 2em auto; 
-    line-height: 1.6; 
-    position: relative; /* Necessary for absolute positioning of logout */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.logout-container {
-    position: absolute;
-    top: 0;
-    right: 0;
+body {
+    background-color: white; /* Identical blue background */
+    font-family: 'Times New Roman', Times, serif; /* Consistent font[cite: 6] */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
 }
 
-.header-section {
+/* 2. TOP NAVIGATION BAR */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #436EEE; /* Identical blue background */
+; /* Dark contrast header[cite: 5] */
+    color: white;
+    padding: 10px 40px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 0px;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #000000;
+    box-shadow: 0px 2px 10px rgba(0,0,0,0.2);
+}
+
+.nav-center h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+}
+
+.logout-btn {
+    color: black; /* Bright red for visibility[cite: 5] */
+    border-left: 1px solid black;
+    text-decoration: none;
+    font-weight: bold;
+    transition: opacity 0.3s;
+}
+
+.logout-btn:hover {
+    opacity: 0.8;
+}
+
+/* 3. DASHBOARD GRID SYSTEM[cite: 5] */
+.dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two-column layout[cite: 5] */
+    gap: 25px;
+    width: 95%;
+    max-width: 1200px;
+    margin-top: 0px;
+    margin-bottom: 40px;
+}
+
+/* 4. SECTION BOXES - Matched to login container[cite: 5, 6] */
+.section-box {
+    background-color: white; /* Clean white containers[cite: 6] */
+    padding: 25px;
+    border-radius: 12px; /* Smooth corners[cite: 6] */
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.2); /* Deeper shadow than login[cite: 6] */
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 5. TOP LEFT: TOOL GRID[cite: 5] */
+.tool-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.tool-btn {
+    background-color: #436EEE;
+    color: white;
+    padding: 20px 10px;
     text-align: center;
-    margin-bottom: 30px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: transform 0.2s;
 }
 
-.button-nav {
-    margin-top: 15px;
+.tool-btn:hover {
+    transform: translateY(-3px);
+}
+
+/* 6. TOP RIGHT: CALENDAR[cite: 5] */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.add-btn {
+    background-color: #436EEE;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    background: #ccc;
+    border: 1px solid #ccc;
+}
+
+.day-cell {
+    background: white;
+    min-height: 50px;
+    padding: 5px;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.dot { height: 7px; width: 7px; border-radius: 50%; display: inline-block; margin: 1px; }
+.dot-quiz { background-color: #ff4757; }    /* Red[cite: 5] */
+.dot-project { background-color: #2ed573; } /* Green[cite: 5] */
+
+/* 7. TABLES & LISTS[cite: 5] */
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; }
+
+.remove-link { 
+    color: #ff4757; 
+    text-decoration: none; 
+    font-size: 0.85em; 
 }
 
 .result-box { 
-    background: #f4f4f4; 
+    background: #f9f9f9; 
     padding: 15px; 
     border-radius: 8px; 
     border: 1px solid #ddd; 
+    margin-top: 10px;
 }
