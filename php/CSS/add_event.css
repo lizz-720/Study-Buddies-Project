@@ -49,3 +49,15 @@ button {
     text-decoration: none;
     font-size: 0.9em;
 }
+
+.dot {
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 1px;
+}
+.dot-2 { background-color: #ff4757; } /* Red: Quiz */
+.dot-1 { background-color: #2ed573; } /* Green: Project */
+.dot-3 { background-color: #FFBF00; } /* Yellow: Assignment */
+.dot-4 { background-color: #FF8DA1; } /* Pink: Other */

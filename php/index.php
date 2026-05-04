@@ -21,23 +21,51 @@
     // 3. VARIABLE DEFINITIONS: Fixes the 'Undefined' errors[cite: 1, 4]
     $current_user = $_SESSION['user_id'];
 
-    // 4. DATA FETCHING: Get your calendar dots and subject list[cite: 1, 4]
-    $events = [];
-    $event_query = "SELECT event_text, event_date, importance FROM calendar_events WHERE user_id = '$current_user'";
-    $event_result = $conn->query($event_query);
-    if ($event_result) {
-        while($row = $event_result->fetch_assoc()) {
-            $events[$row['event_date']][] = $row;
-        }
+    // 4. FORM HANDLING: Process Add Event, Add Subject, or AI requests[cite: 6, 9]
+    
+    // NEW: Handle Calendar Event Addition[cite: 6]
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_event'])) {
+        $e_date = $conn->real_escape_string($_POST['event_date']);
+        $e_text = $conn->real_escape_string($_POST['event_text']);
+        $e_importance = (int)$_POST['importance'];
+
+        $conn->query("INSERT INTO calendar_events (user_id, event_date, event_text, importance) 
+                      VALUES ('$current_user', '$e_date', '$e_text', '$e_importance')");
+        header("Location: index.php");
+        exit();
     }
 
-    // 5. FORM HANDLING: Process "Add Subject" or "Delete" requests[cite: 1, 4]
+    // Add Subject[cite: 9]
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_subject'])) {
         $subject_name = $conn->real_escape_string($_POST['new_subject']);
         $sql = "INSERT INTO subjects (user_id, subject_name, difficulty) VALUES ('$current_user', '$subject_name', 'Medium')";
         if ($conn->query($sql)) {
             header("Location: index.php");
             exit();
+        }
+    }
+
+    // AI Guide Generation[cite: 9]
+    if($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['topic'])) {
+        $topic = urlencode($_POST['topic']);
+        $python_url = "http://logic-api:8000/generate-guide/$topic";
+        $response = file_get_contents($python_url);
+        
+        if ($response) {
+            $data = json_decode($response, true);
+            $ai_result = "<div class='result-box'><h3>Result for: " . htmlspecialchars($_POST['topic']) . "</h3>" . $data['guide'] . "</div>";
+        }
+    }
+
+    // 5. DATA FETCHING: Get your calendar dots after potential updates[cite: 1, 4]
+    // 5. DATA FETCHING: Get your calendar dots after potential updates
+    $events = [];
+    // Added missing semicolon at the end of the line below
+    $event_query = "SELECT id, event_text, event_date, importance FROM calendar_events WHERE user_id = '$current_user' ORDER BY event_date ASC"; 
+    $event_result = $conn->query($event_query);
+    if ($event_result) {
+        while($row = $event_result->fetch_assoc()) {
+            $events[$row['event_date']][] = $row;
         }
     }
 
@@ -67,6 +95,14 @@
         <meta charset = "UTF-8">
         <title>Study Guide Creator</title>
         <link rel = "stylesheet" href = "CSS/index.css">
+        <style>
+            /* Ensure the dots match your 4-color importance levels[cite: 8, 10] */
+            .dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin: 1px; }
+            .dot-2 { background-color: #ff4757; } /* Red: Quiz */
+            .dot-1 { background-color: #2ed573; } /* Green: Project */
+            .dot-3 { background-color: #FFBF00; } /* Yellow: Assignment */
+            .dot-4 { background-color: #FF8DA1; } /* Pink: Other */
+        </style>
     </head>
     <body>
             <nav class="top-bar">
@@ -90,31 +126,68 @@
                 </div>
             </div>
 
-<!-- TOP RIGHT: Calendar View -->
-<div class="section-box" style="position: relative;">
-    <div class="calendar-header">
-        <!-- Dynamic Month and Year Display -->
-        <h3>📅 <?php echo date('F Y'); ?></h3>
-        <a href="add_event.php" class="add-btn">+</a>
-    </div>
-    <div class="calendar-grid">
-        <?php
-        $daysInMonth = date('t');
-        $currentMonthYear = date('Y-m-');
+<!-- CALENDAR LOGIC: Must come before the HTML that uses it[cite: 7] -->
+<?php
+    // 1. Get current month/year from URL, or default to "now"
+    $month = isset($_GET['m']) ? (int)$_GET['m'] : (int)date('n');
+    $year = isset($_GET['y']) ? (int)$_GET['y'] : (int)date('Y');
 
-        for ($i = 1; $i <= $daysInMonth; $i++) {
-            $dateStr = $currentMonthYear . sprintf("%02d", $i);
-            echo "<div class='day-cell'>$i";
-            
-            if (isset($events[$dateStr])) {
-                echo "<br>";
-                foreach ($events[$dateStr] as $e) {
-                    $dotClass = ($e['importance'] == 2) ? 'dot-quiz' : 'dot-project';
-                    echo "<span class='dot $dotClass' title='".htmlspecialchars($e['event_text'])."'></span>";
-                }
+    // 2. Calculate Previous Month/Year
+    $prevMonth = $month - 1;
+    $prevYear = $year;
+    if ($prevMonth < 1) {
+        $prevMonth = 12;
+        $prevYear--;
+    }
+
+    // 3. Calculate Next Month/Year
+    $nextMonth = $month + 1;
+    $nextYear = $year;
+    if ($nextMonth > 12) {
+        $nextMonth = 1;
+        $nextYear++;
+    }
+
+    // 4. Create the timestamp and get month details
+    $firstDayOfMonth = mktime(0, 0, 0, $month, 1, $year);
+    $daysInMonth = date('t', $firstDayOfMonth);
+    $monthName = date('F', $firstDayOfMonth);
+    $dayOfWeek = date('w', $firstDayOfMonth); // Start day of week (0-6)
+?>
+
+<!-- TOP RIGHT: Calendar View[cite: 7] -->
+<div class="section-box">
+    <div class="calendar-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <a href="?m=<?= $prevMonth ?>&y=<?= $prevYear ?>" style="text-decoration: none; color: #436EEE; font-weight: bold;">&lt; Prev</a>
+        
+        <h3 style="margin: 0;">📅 <?= $monthName . " " . $year ?></h3>
+        
+        <a href="?m=<?= $nextMonth ?>&y=<?= $nextYear ?>" style="text-decoration: none; color: #436EEE; font-weight: bold;">Next &gt;</a>
+    </div>
+
+    <div class="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; background: #ccc; border: 1px solid #ccc;">
+        <?php
+            // 1. Fill in empty cells for the previous month's trailing days[cite: 7]
+            for ($i = 0; $i < $dayOfWeek; $i++) {
+                echo "<div class='day-cell' style='background: #eee; min-height: 50px;'></div>";
             }
-            echo "</div>";
-        }
+
+            // 2. Fill in the actual days of the month[cite: 7]
+            for ($i = 1; $i <= $daysInMonth; $i++) {
+                $dateStr = sprintf("%04d-%02d-%02d", $year, $month, $i);
+                echo "<div class='day-cell' style='background: white; min-height: 50px; padding: 5px; text-align: center;'>$i";
+                
+                // Inside your for loop for the days of the month[cite: 7]
+                if (isset($events[$dateStr])) {
+                    echo "<br>";
+                    foreach ($events[$dateStr] as $e) {
+                        // Change this line to use a dynamic class based on importance
+                        // This will generate classes like dot-1, dot-2, dot-3, and dot-4
+                        echo "<span class='dot dot-" . $e['importance'] . "' title='" . htmlspecialchars($e['event_text']) . "'></span>";
+                    }
+                }
+                echo "</div>";
+            }
         ?>
     </div>
 </div>
@@ -127,43 +200,59 @@
                     <button type="submit">Add</button>
                 </form>
                 <table>
-                    <tr><th>Subject</th><th>Action</th></tr>
                     <?php
                     $result = $conn->query("SELECT id, subject_name FROM subjects WHERE user_id = '$current_user'");
                     while($row = $result->fetch_assoc()) {
-                        echo "<tr>
-                                <td>".htmlspecialchars($row['subject_name'])."</td>
-                                <td>
-                                    <a href='flashcards.php?subject_id=".$row['id']."'>Open</a> | 
-                                    <a href='delete_subject.php?id=".$row['id']."' class='remove-link' onclick='return confirm(\"Delete this subject?\")'>Remove</a>
-                                </td>
-                            </tr>";
+                        echo "<tr><td>".htmlspecialchars($row['subject_name'])."</td><td><a href='flashcards.php?subject_id=".$row['id']."'>Open</a></td></tr>";
                     }
                     ?>
                 </table>
             </div>
 
-            <!-- BOTTOM RIGHT: Upcoming Deadlines -->
+            <!-- BOTTOM RIGHT: Deadlines & Add Event[cite: 6] -->
             <div class="section-box">
-            <h3>🔔 Upcoming Deadlines</h3>
-            <div class="list-view">
-                <ul style="list-style: none; padding: 0;">
-                    <?php
-                    if (!empty($events)) {
-                        foreach ($events as $date => $dayEvents) {
-                            foreach ($dayEvents as $e) {
-                                // Use importance for color: 2 is Red (Quiz), 1 is Green (Project)
-                                $color = ($e['importance'] == 2) ? '#ff4757' : '#2ed573';
-                                echo "<li style='border-left: 4px solid $color; padding-left: 10px; margin-bottom: 10px; font-family: sans-serif;'>
-                                        <strong>$date</strong>: " . htmlspecialchars($e['event_text']) . "
-                                    </li>";
+                <h3>📅 Add Important Date</h3>
+                <form method="POST" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+                    <input type="text" name="event_text" placeholder="Event Name (e.g. CPSC 335 Quiz)" required style="padding: 5px;">
+                    <input type="date" name="event_date" required style="padding: 5px;">
+                    <select name="importance" style="padding: 5px;">
+                        <option value="2">Red (Quiz)</option>
+                        <option value="1">Green (Project)</option>
+                        <option value="3">Yellow (Assignment)</option>
+                        <option value="4">Pink (Other)</option>
+                    </select>
+                    <button type="submit" name="add_event">Add Event</button>
+                </form>
+
+                <h3>📌 Upcoming Deadlines</h3>
+                <div class="list-view">
+                    <ul style="list-style: none; padding: 0;">
+                        <?php
+                        if (!empty($events)) {
+                            foreach ($events as $date => $dayEvents) {
+                                foreach ($dayEvents as $e) {
+                                    $color = '#ccc'; 
+                                    if ($e['importance'] == 2) $color = '#ff4757'; // Red
+                                    elseif ($e['importance'] == 1) $color = '#2ed573'; // Green
+                                    elseif ($e['importance'] == 3) $color = '#FFBF00'; // Yellow
+                                    elseif ($e['importance'] == 4) $color = '#FF8DA1'; // Pink
+                                    // Ensure the semicolon above replaces the[cite: 10] placeholder in your snippet[cite: 10, 11]
+
+                                    echo "<li style='border-left: 4px solid $color; padding-left: 10px; margin-bottom: 10px; display: flex; justify-content: space-between;'>
+                                            <span><strong>$date</strong>: " . htmlspecialchars($e['event_text']) . "</span>
+                                            <a href='delete_event.php?id=" . $e['id'] . "' 
+                                            style='color: #ff4757; text-decoration: none; font-size: 0.8em;' 
+                                            onclick='return confirm(\"Remove this date?\")'>[Remove]</a>
+                                        </li>";
+                                }
                             }
-                        }
-                    } else {
-                        echo "<li>Relax! No upcoming deadlines.</li>";
-                    }
-                    ?>
-                </ul>
+                        } 
+                        else { 
+                            echo "<li>No deadlines yet!</li>"; }
+                        
+                        ?>
+                    </ul>
+                </div>
             </div>
         </div>
     </body>
