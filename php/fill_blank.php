@@ -41,52 +41,78 @@ $conn->close();
 <html>
 <head>
     <title>Fill in the Blank</title>
+    <link rel="stylesheet" href="CSS/index.css"> <!-- Main Nav Styles -->
+    <link rel="stylesheet" href="CSS/fill_blank.css"> <!-- New Styles -->
 </head>
 <body>
 
-<a href="index.php"><button type="button">Home</button></a>
-<a href="flashcards.php"><button type="button">Flashcards</button></a>
-<a href="fill_blank.php"><button type="button">Fill in the Blank</button></a>
-<a href="timer.php"><button type="button">Study Timer</button></a>
-<a href="logout.php"><button type="button">Logout</button></a>
+    <!-- Navigation Tab Bar -->
+    <nav class="top-bar" style="background-color: white; width: 100%; display: flex; justify-content: center; gap: 15px; padding: 15px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; z-index: 1000;">
+        <a href="index.php" style="text-decoration: none;"><button type="button" style="background-color: #436EEE; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Home</button></a>
+        <a href="flashcards.php" style="text-decoration: none;"><button type="button" style="background-color: #436EEE; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Flashcards</button></a>
+        <a href="timer.php" style="text-decoration: none;"><button type="button" style="background-color: #436EEE; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Study Timer</button></a>
+        <a href="logout.php" style="text-decoration: none;"><button type="button" style="background-color: #ff4757; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Logout</button></a>
+    </nav>
 
-<h1>Fill in the Blank Practice</h1>
+<!-- Add a spacer so the content doesn't hide under the fixed nav -->
+<div style="margin-top: 80px;"></div>
 
-<form method="GET">
-    <select name="subject_id" required>
-        <option value="">-- Select Subject --</option>
-        <?php foreach ($subjects as $subject): ?>
-            <option value="<?= $subject['id'] ?>" <?= ($selectedSubjectId == $subject['id']) ? "selected" : "" ?>>
-                <?= htmlspecialchars($subject['subject_name']) ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
-    <button type="submit">Start Practice</button>
-</form>
+<div class="practice-container">
+    <!-- Rest of your content remains here -->
+    <h1>Fill in the Blank</h1>
 
-<?php if ($questionData): ?>
-    <hr>
-    <h3><?= htmlspecialchars($questionData['question']) ?></h3>
-
-    <form method="POST">
-        <input type="hidden" name="correct_answer" value="<?= htmlspecialchars($questionData['answer']) ?>">
-        <input type="text" name="user_answer" placeholder="Your answer..." required>
-        <button type="submit">Check Answer</button>
+    <form method="GET" style="margin-bottom: 20px;">
+        <select name="subject_id" required>
+            <option value="">-- Select Subject --</option>
+            <?php foreach ($subjects as $subject): ?>
+                <option value="<?= $subject['id'] ?>" <?= ($selectedSubjectId == $subject['id']) ? "selected" : "" ?>>
+                    <?= htmlspecialchars($subject['subject_name']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <button type="submit">Start</button>
     </form>
-<?php endif; ?>
 
-<?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $correct = strtolower(trim($_POST['correct_answer']));
-    $userAnswer = strtolower(trim($_POST['user_answer']));
+    <?php if ($questionData): 
+        // 1. Get the question and answer[cite: 12]
+        $fullSentence = htmlspecialchars($questionData['question']);
+        $answer = htmlspecialchars($questionData['answer']);
 
-    if ($correct === $userAnswer) {
-        echo "<p style='color:green;'>Correct! 🎉</p>";
-    } else {
-        echo "<p style='color:red;'>Incorrect. Correct answer: " . htmlspecialchars($_POST['correct_answer']) . "</p>";
+        // 2. Create the input HTML[cite: 11, 12]
+        $inputField = '<input type="text" name="user_answer" class="blank-input" required autocomplete="off">';
+
+        // 3. Replace the answer word in the sentence with the input field[cite: 12]
+        // Note: This assumes the word to be blanked matches the 'answer' column exactly.
+        $displaySentence = str_ireplace($answer, $inputField, $fullSentence);
+    ?>
+
+        <form method="POST">
+            <div class="sentence-box">
+                <?= $displaySentence ?>
+            </div>
+            <input type="hidden" name="correct_answer" value="<?= $answer ?>">
+            <button type="submit">Check Answer</button>
+        </form>
+
+    <?php endif; ?>
+
+    <?php
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $correct = strtolower(trim($_POST['correct_answer']));
+        $userAnswer = strtolower(trim($_POST['user_answer']));
+
+        if ($correct === $userAnswer) {
+            echo "<p style='color:green; font-weight:bold;'>Correct! 🎉</p>";
+        } else {
+            echo "<p style='color:red;'>Incorrect. The word was: <strong>" . htmlspecialchars($_POST['correct_answer']) . "</strong></p>";
+        }
     }
-}
-?>
+    ?>
+    
+    <div style="margin-top: 20px;">
+        <a href="index.php" style="color: #436EEE; text-decoration: none;">Back to Dashboard</a>
+    </div>
+</div>
 
 </body>
 </html>

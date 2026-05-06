@@ -2,8 +2,8 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-  header("Location: login.php");
-  exit();
+    header("Location: login.php");
+    exit();
 }
 
 $host = 'db';
@@ -18,12 +18,12 @@ $userId = (int)$_SESSION['user_id'];
 $subjectId = isset($_GET['subject_id']) ? (int)$_GET['subject_id'] : 0;
 
 if ($subjectId <= 0) {
-  $conn->close();
-  header("Location: flashcards.php");
-  exit();
+    $conn->close();
+    header("Location: flashcards.php");
+    exit();
 }
 
-// verify subject belongs to user
+// 1. Define $subjectName here
 $check = $conn->prepare("SELECT subject_name FROM subjects WHERE id = ? AND user_id = ?");
 $check->bind_param("ii", $subjectId, $userId);
 $check->execute();
@@ -31,79 +31,213 @@ $subjectRow = $check->get_result()->fetch_assoc();
 $check->close();
 
 if (!$subjectRow) {
-  $conn->close();
-  die("Not allowed.");
+    $conn->close();
+    die("Not allowed.");
 }
 
-$subjectName = $subjectRow['subject_name'];
+$subjectName = $subjectRow['subject_name']; // Line fixing the "Undefined variable $subjectName"
 
-// load all cards
+// 2. Define $cards here
 $stmt = $conn->prepare("SELECT id, question, answer FROM study_content WHERE subject_id = ? ORDER BY id DESC");
 $stmt->bind_param("i", $subjectId);
 $stmt->execute();
 $res = $stmt->get_result();
 
-$cards = [];
+$cards = []; // Line fixing the "Undefined variable $cards"
 while ($row = $res->fetch_assoc()) {
-  $cards[] = [
-    "id" => (int)$row["id"],
-    "q"  => $row["question"],
-    "a"  => $row["answer"]
-  ];
+    $cards[] = [
+        "id" => (int)$row["id"],
+        "q"  => $row["question"],
+        "a"  => $row["answer"]
+    ];
 }
 $stmt->close();
 $conn->close();
 ?>
+
 <!doctype html>
 <html>
 <head>
   <meta charset="utf-8" />
   <title>Study Mode - Flashcards</title>
+  <!-- Link your existing index.css -->
+  <link rel="stylesheet" href="CSS/index.css">
   <style>
-    body { font-family: sans-serif; max-width: 800px; margin: 2em auto; }
-    .card { border:1px solid #ddd; border-radius:12px; padding:18px; min-height:160px; }
-    .meta { color:#666; margin: 10px 0; }
-    .big { font-size: 22px; white-space: pre-wrap; }
-    .row { display:flex; gap:10px; margin-top: 12px; flex-wrap: wrap; }
-    button { padding:10px 14px; cursor:pointer; }
+    /* Custom overrides for Study Mode specific elements */
+    .study-container {
+        width: 95%;
+        max-width: 800px;
+        margin-top: 20px;
+    }
+
+    .flashcard-main {
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border: 2px solid #436EEE;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .flashcard-main:hover {
+        background-color: #fcfcfc;
+    }
+
+    .card-text {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+        padding: 40px;
+        white-space: pre-wrap;
+    }
+
+    .controls-row {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 25px;
+        flex-wrap: wrap;
+    }
+
+    .btn-study {
+        background-color: #436EEE;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.2s;
+    }
+
+    .btn-study:hover {
+        background-color: #1e3a8a;
+    }
+
+    .btn-secondary {
+        background-color: #f0f0f0;
+        color: #333;
+    }
+
+    .meta-info {
+        color: #666;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    /* Sidebar Score Tracker */
+.score-sidebar {
+    position: fixed;
+    right: 20px;
+    top: 100px;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 100;
+}
+
+.score-box {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+    border-top: 5px solid #ccc;
+}
+
+.score-box.correct {
+    border-color: #2ed573; /* Green */
+    color: #2ed573;
+}
+
+.score-box.incorrect {
+    border-color: #ff4757; /* Red */
+    color: #ff4757;
+}
+
+.score-num {
+    font-size: 2rem;
+    font-weight: bold;
+    display: block;
+}
+
+.score-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #666;
+}
   </style>
 </head>
 <body>
 
-<a href="index.php">
-    <button type="button">🏠 Home</button>
-</a>
+<!-- Standard Top Bar to match Index -->
+<nav class="top-bar">
+    <div class="nav-left">
+        <h1 style="margin: 0; font-size: 1.5rem;">Study Buddies</h1>
+    </div>
+    <div class="nav-center">
+        <h2 style="margin: 0; font-size: 1.2rem; color: #white;">Mode: <?php echo htmlspecialchars($subjectName); ?></h2>
+    </div>
+    <div class="nav-right">
+        <a href="flashcards.php?subject_id=<?php echo $subjectId; ?>" class="tool-btn" style="padding: 8px 15px; background: white; color: #436EEE;">Back to Deck</a>
+    </div>
+</nav>
+<!-- Score Tracker Sidebar -->
+<div class="score-sidebar">
+    <div class="score-box correct">
+        <span class="score-label">Correct</span>
+        <span class="score-num" id="correctCount">0</span>
+    </div>
+    <div class="score-box incorrect">
+        <span class="score-label">Wrong</span>
+        <span class="score-num" id="wrongCount">0</span>
+    </div>
+</div>
+<div class="study-container">
+    <?php if (count($cards) === 0): ?>
+        <div class="section-box" style="text-align: center; justify-content: center;">
+            <h3>No cards in this deck yet.</h3>
+            <p>Add some in Flashcards first.</p>
+            <a href="flashcards.php?subject_id=<?php echo $subjectId; ?>" class="tool-btn" style="margin-top: 20px;">Go Add Cards</a>
+        </div>
+    <?php else: ?>
+        
+        <div class="meta-info" id="pos">Loading...</div>
 
-<a href="flashcards.php?subject_id=<?php echo $subjectId; ?>">
-    <button type="button">⬅ Back to Deck</button>
-</a>
+        <!-- Main Card Section - Styled as a Section Box -->
+        <div class="section-box flashcard-main" id="flipContainer">
+            <div class="card-text" id="text"></div>
+            <div style="color: #436EEE; font-size: 0.9rem; margin-top: 20px;">(Click to Flip or Press Space)</div>
+        </div>
 
-<br><br>
+        <!-- Navigation Controls -->
+        <div class="controls-row">
+            <button type="button" class="btn-study btn-secondary" id="prevBtn">Previous</button>
+            <button type="button" class="btn-study" id="flipBtn" style="min-width: 150px;">Show Answer</button>
+            <button type="button" class="btn-study btn-secondary" id="nextBtn">Next</button>
+        </div>
 
-<h2>Study Mode: <?php echo htmlspecialchars($subjectName); ?></h2>
-<p class="meta">Deck ID: <?php echo $subjectId; ?> • Cards: <?php echo count($cards); ?></p>
+        <div class="controls-row">
+            <button type="button" class="btn-study btn-secondary" id="shuffleBtn" style="font-size: 0.8rem;">Shuffle Deck</button>
+            <button type="button" class="btn-study btn-secondary" id="restartBtn" style="font-size: 0.8rem;">Restart</button>
+        </div>
 
-<?php if (count($cards) === 0): ?>
-  <p>No cards in this deck yet. Add some in Flashcards first.</p>
-  <a href="flashcards.php?subject_id=<?php echo $subjectId; ?>"><button type="button">Go Add Cards</button></a>
-<?php else: ?>
+        <div class="controls-row">
+            <button type="button" class="btn-study" style="background-color: #2ed573;" onclick="markCorrect()">✅ Got It!</button>
+            <button type="button" class="btn-study" style="background-color: #ff4757;" onclick="markWrong()">❌ Missed It</button>
+        </div>
 
-  <div class="card">
-    <div class="meta" id="pos"></div>
-    <div class="big" id="text"></div>
-  </div>
+    <?php endif; ?>
+</div>
 
-  <div class="row">
-    <button type="button" id="flipBtn">Show Answer</button>
-    <button type="button" id="prevBtn">Prev</button>
-    <button type="button" id="nextBtn">Next</button>
-    <button type="button" id="shuffleBtn">Shuffle</button>
-    <button type="button" id="restartBtn">Restart</button>
-  </div>
-
-  <script>
+<script>
+    // ... Keeping your original JS logic here ...
     const cards = <?php echo json_encode($cards, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-
     let order = cards.map((_, i) => i);
     let i = 0;
     let showingAnswer = false;
@@ -115,7 +249,7 @@ $conn->close();
     function render() {
       const idx = order[i];
       const c = cards[idx];
-      posEl.textContent = `Card ${i + 1} / ${order.length}`;
+      posEl.textContent = `Card ${i + 1} of ${order.length}`;
       textEl.textContent = showingAnswer ? c.a : c.q;
       flipBtn.textContent = showingAnswer ? "Show Question" : "Show Answer";
     }
@@ -138,7 +272,6 @@ $conn->close();
     }
 
     function shuffle() {
-      // shuffle
       for (let j = order.length - 1; j > 0; j--) {
         const k = Math.floor(Math.random() * (j + 1));
         [order[j], order[k]] = [order[k], order[j]];
@@ -154,14 +287,44 @@ $conn->close();
       showingAnswer = false;
       render();
     }
+    let correct = 0;
+    let wrong = 0;
+
+    function updateScoreboard() {
+        document.getElementById('correctCount').textContent = correct;
+        document.getElementById('wrongCount').textContent = wrong;
+    }
+
+    function markCorrect() {
+        correct++;
+        updateScoreboard();
+        next(); // Automatically move to next card
+    }
+
+    function markWrong() {
+        wrong++;
+        updateScoreboard();
+        next(); // Automatically move to next card
+    }
+
+    // Optional: Reset scores when clicking 'Restart'
+    function restart() {
+        order = cards.map((_, idx) => idx);
+        i = 0;
+        correct = 0;
+        wrong = 0;
+        showingAnswer = false;
+        updateScoreboard();
+        render();
+    }
 
     document.getElementById("flipBtn").addEventListener("click", flip);
+    document.getElementById("flipContainer").addEventListener("click", flip); // Clicking card also flips
     document.getElementById("nextBtn").addEventListener("click", next);
     document.getElementById("prevBtn").addEventListener("click", prev);
     document.getElementById("shuffleBtn").addEventListener("click", shuffle);
     document.getElementById("restartBtn").addEventListener("click", restart);
 
-    // keyboard shortcuts
     document.addEventListener("keydown", (e) => {
       if (e.key === " " || e.key === "Enter") flip();
       if (e.key === "ArrowRight") next();
@@ -170,8 +333,5 @@ $conn->close();
 
     render();
   </script>
-
-<?php endif; ?>
-
 </body>
 </html>

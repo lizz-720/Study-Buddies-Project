@@ -253,6 +253,24 @@
                         ?>
                     </ul>
                 </div>
+                
+            </div>
+<<div class="utility-row">
+        <div class="section-box utility-card">
+            <div class="utility-content">
+                <div class="clock-side">
+                    <h3>🕒 Local Time</h3>
+                    <div id="liveClock" class="large-display">00:00:00 AM</div>
+                </div>
+                <div class="timer-side">
+                    <h3>⏱️ Study Timer</h3>
+                    <div class="timer-controls">
+                        <input id="barStudyMins" type="number" min="1" value="25">
+                        <button id="barStartBtn">Start</button>
+                        <button id="barResetBtn">Reset</button>
+                    </div>
+                    <div id="barTimeDisplay" class="large-display">25:00</div>
+                </div>
             </div>
         </div>
     </body>

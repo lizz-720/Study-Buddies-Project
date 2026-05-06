@@ -1,0 +1,50 @@
+/* Force Subject Links to look like the Blue "Add Card" button */
+        .subject-link, .subject-link:visited {
+            display: block !important;
+            background-color: #436EEE !important;
+            color: white !important;
+            padding: 10px 15px !important;
+            text-decoration: none !important;
+            border-radius: 5px !important;
+            text-align: center !important;
+            font-weight: bold !important;
+            transition: background 0.2s !important;
+            border: none !important;
+        }
+
+        .subject-link:hover {
+            background-color: #365bc7 !important;
+        }
+
+        /* Active subject state */
+        .active-subject, .active-subject:visited {
+            background-color: #1e3a8a !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
+        }
+
+        /* Study Mode Button */
+        .study-mode-btn {
+            background-color: #2ed573;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Ensure Flashcards have dimensions to be visible */
+        .flashcard-container {
+            width: 250px;
+            height: 180px;
+            perspective: 1000px;
+        }
+        
+        /* Layout Fixes */
+        .flashcard-layout-wrapper {
+            display: flex;
+            width: 100%;
+            gap: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
