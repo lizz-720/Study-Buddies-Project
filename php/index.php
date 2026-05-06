@@ -102,6 +102,21 @@
             .dot-1 { background-color: #2ed573; } /* Green: Project */
             .dot-3 { background-color: #FFBF00; } /* Yellow: Assignment */
             .dot-4 { background-color: #FF8DA1; } /* Pink: Other */
+            /* Add this into your existing <style> section */
+    .logout-button {
+        background-color: #ff4757 !important;
+        color: white !important;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .logout-button:hover {
+        background-color: #e04050 !important;
+    }
         </style>
     </head>
     <body>
@@ -114,7 +129,7 @@
                 </div>
                 <div class="nav-right">
                     <!-- This now uses the consistent red button style[cite: 12] -->
-                    <a href="logout.php" class="btn-red">Logout</a>
+                    <a href="logout.php" class="logout-button">Logout</a>
                 </div>
             </nav>
         <div class="dashboard">

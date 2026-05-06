@@ -153,3 +153,17 @@ th, td {
     padding: 12px; 
     border-bottom: 1px solid #eee; 
 }
+.logout-button {
+        background-color: #ff4757 !important;
+        color: white !important;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .logout-button:hover {
+        background-color: #e04050 !important;
+    }
