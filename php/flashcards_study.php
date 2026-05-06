@@ -63,7 +63,70 @@ $conn->close();
   <!-- Link your existing index.css -->
   <link rel="stylesheet" href="CSS/index.css">
   <style>
+    /* Navigation Bar Overhaul (Matches Fill-in-Blank) */
+    .top-bar {
+        background-color: #436EEE;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 12px 30px;
+        position: fixed; /* Keeps nav at the top */
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        box-sizing: border-box;
+    }
+
+    .brand-name {
+        font-size: 1.6rem;
+        color: white;
+        margin: 0;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .nav-spacer {
+        margin-left: auto; /* Pushes buttons to the right */
+        display: flex;
+        gap: 12px;
+    }
+
+    .nav-button {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 8px 18px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+    }
+
+    .nav-button:hover {
+        background-color: white;
+        color: #436EEE !important;
+    }
+
+    .logout-button {
+        background-color: #ff4757 !important;
+        border: none;
+    }
+
+    /* Prevents the fixed nav bar from covering your cards */
+    body {
+        padding-top: 100px;
+        background-color: #ffffff !important;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     /* Custom overrides for Study Mode specific elements */
+    .study-container {
+        width: 95%;
+        max-width: 800px;
+        margin: 0 auto; /* Centers the card container */
+    }
     .study-container {
         width: 95%;
         max-width: 800px;
@@ -176,15 +239,15 @@ $conn->close();
 <body>
 
 <!-- Standard Top Bar to match Index -->
-<nav class="top-bar">
-    <div class="nav-left">
-        <h1 style="margin: 0; font-size: 1.5rem;">Study Buddies</h1>
-    </div>
-    <div class="nav-center">
-        <h2 style="margin: 0; font-size: 1.2rem; color: #white;">Mode: <?php echo htmlspecialchars($subjectName); ?></h2>
-    </div>
-    <div class="nav-right">
-        <a href="flashcards.php?subject_id=<?php echo $subjectId; ?>" class="tool-btn" style="padding: 8px 15px; background: white; color: #436EEE;">Back to Deck</a>
+<<nav class="top-bar">
+    <a href="index.php" class="brand-name">Study Buddies</a>
+    <div class="nav-spacer">
+        <a href="index.php" class="nav-button">Dashboard</a>
+        <a href="flashcards.php" class="nav-button">Flashcards</a>
+        <a href="fill_blank.php" class="nav-button">Fill-in-Blank</a>
+        <a href="multiplechoice.php" class="nav-button">Multiple Choice</a>
+        <a href="timer.php" class="nav-button">Timer</a>
+        <a href="logout.php" class="nav-button logout-button">Logout</a>
     </div>
 </nav>
 <!-- Score Tracker Sidebar -->

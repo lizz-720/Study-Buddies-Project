@@ -46,3 +46,28 @@ button {
     cursor: pointer;
     margin-top: 10px;
 }
+.blank-input {
+    border: none;
+    border-bottom: 2px solid #436EEE;
+    background-color: transparent;
+    font-size: 1.4rem;
+    font-family: 'Times New Roman', serif;
+    color: #436EEE;
+    text-align: center;
+    width: 150px;
+    outline: none;
+    transition: border-bottom 0.3s;
+}
+
+.blank-input {
+    border: none !important;
+    border-bottom: 3px solid #436EEE !important;
+    background-color: #f0f4ff !important;
+    font-size: 1.4rem !important;
+    font-family: 'Times New Roman', serif !important;
+    color: #436EEE !important;
+    text-align: center !important;
+    width: 180px !important;
+    padding: 5px !important;
+    display: inline-block !important;
+}

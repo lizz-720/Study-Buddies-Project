@@ -56,31 +56,21 @@ if ($selectedSubjectId > 0) {
 <head>
     <meta charset="UTF-8">
     <title>Multiple Choice Practice</title>
-    <link rel="stylesheet" href="CSS/index.css">
-    <style>
-        /* Modal Style for Adding Questions */
-        #addModal {
-            display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 20px;
-            width: 90%;
-            max-width: 500px;
-            border-radius: 12px;
-        }
-    </style>
+    <link rel="stylesheet" href="CSS/index.css?v=1.1">
 </head>
 <body>
-    <nav class="top-bar">
-        <div class="nav-center"><h1>Study Buddies Quiz</h1></div>
-        <div class="nav-right"><a href="index.php" class="logout-btn">Back to Home</a></div>
-    </nav>
+<!-- STANDARDIZED RIGHT-ALIGNED NAVIGATION -->
+<nav class="top-bar">
+    <a href="index.php" class="brand-name">Study Buddies</a>
+    <div class="nav-spacer">
+        <a href="index.php" class="nav-button">Dashboard</a>
+        <a href="flashcards.php" class="nav-button">Flashcards</a>
+        <a href="fill_blank.php" class="nav-button">Practice</a>
+        <a href="multiplechoice.php" class="nav-button">Quiz</a>
+        <a href="timer.php" class="nav-button">Timer</a>
+        <a href="logout.php" class="nav-button logout-button">Logout</a>
+    </div>
+</nav>
 
     <div class="dashboard" style="display: flex; flex-direction: column; align-items: center;">
         <div class="section-box" style="width: 100%; max-width: 600px;">
@@ -121,26 +111,6 @@ if ($selectedSubjectId > 0) {
                 <div id="quizFeedback" style="margin-top: 20px; text-align: center; font-weight: bold;"></div>
                 <button onclick="location.reload()" id="nextBtn" style="display:none; width:100%; margin-top:10px; padding: 10px; cursor:pointer;">Next Question</button>
             <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- Modal for Quick Adding Questions -->
-    <div id="addModal">
-        <div class="modal-content">
-            <h4>Add a New Question</h4>
-            <form method="POST" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-                <select name="subject_id" required style="padding: 8px;">
-                    <?php foreach ($subjects as $s): ?>
-                        <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['subject_name']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <input type="text" name="manual_question" placeholder="Enter Question" required style="padding: 8px;">
-                <input type="text" name="manual_answer" placeholder="Enter Correct Answer" required style="padding: 8px;">
-                <div style="display: flex; gap: 10px;">
-                    <button type="submit" style="flex: 1; background: #2ed573; color: white; border: none; padding: 10px; border-radius: 5px;">Save</button>
-                    <button type="button" onclick="document.getElementById('addModal').style.display='none'" style="flex: 1; background: #ff4757; color: white; border: none; padding: 10px; border-radius: 5px;">Cancel</button>
-                </div>
-            </form>
         </div>
     </div>
 
